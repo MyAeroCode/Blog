@@ -300,6 +300,7 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
         -   `.isSealed()`
         -   `.freeze()`
         -   `.isFrozen()`
+        -   `.create()`
 -   `JSON Support`
     -   `.parse()`
     -   `.stringify()`

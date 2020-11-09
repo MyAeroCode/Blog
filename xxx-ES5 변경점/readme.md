@@ -633,3 +633,133 @@ delete obj.x; // will ignored
 ### isFrozen()
 
 `freeze()`가 적용되었다면 true를 반환합니다.
+
+---
+
+---
+
+### create()
+
+`prototype object`를 상속받은 빈 객체를 생성합니다. `null`을 전달하면 프로토타입이 존재하지 않는 객체를 생성할 수 있습니다.
+
+```ts
+const o1 = {};
+const o2 = Object.create(Object.prototype);
+const o3 = Object.create(null);
+
+console.log(o1 instanceof Object); // true
+console.log(o2 instanceof Object); // true
+console.log(o3 instanceof Object); // false
+console.log(o3.__prototype__); // undefined
+```
+
+두 번째 인자로 `PropertyDescriptorsObject`를 사용하여 프로퍼티를 부여할 수 있습니다.
+
+```ts
+const obj = Object.create(null, {
+    val: {
+        value: 12345,
+    },
+});
+
+console.log(obj);
+//
+// will print
+// {
+//     val : 12345
+// }
+```
+
+위의 특성을 사용하여 고전적인 상속을 구현할 수 있습니다.
+
+```ts
+//
+// 부모 클래스
+function Shape() {
+    this.center = {
+        x: 0,
+        y: 0,
+    };
+}
+Shape.prototype.moveTo = function (x, y) {
+    this.center.x = x;
+    this.center.y = y;
+};
+
+//
+// 자식 클래스
+function Rect() {
+    Shape.call(this);
+}
+Rect.prototype = Object.create(Shape.prototype);
+Rect.prototype.constructor = Rect;
+
+//
+// 테스팅
+const rect = new Rect();
+console.log(rect instanceof Rect); // true
+console.log(rect instanceof Shape); // true
+console.log(rect.moveTo !== undefined); // true
+```
+
+프로토체인은 기본적으로 1차원 형태이므로, 다중상속을 수행하려면 매번 프로토체인의 끝에 프로토타입 오브젝트를 등록해야 합니다. 아래 코드는 그러한 역할을 하는 함수입니다.
+
+```ts
+function mixin() {
+    var superClasses = arguments;
+    var holder = Object.create(Object.prototype);
+    for (var i = superClasses.length - 1; 0 <= i; i--) {
+        //
+        // 프로토체인의 끝을 찾고,
+        var tail = holder;
+        while (tail.__proto__.constructor !== Object) {
+            tail = tail.__proto__;
+        }
+
+        //
+        // 프로토체인의 끝을 부모 클래스로 대체한다.
+        tail.__proto__ = Object.create(superClasses[i].prototype);
+    }
+    return holder;
+}
+```
+
+위의 함수를 사용하여 다중상속을 구현할 수 있습니다. 이 때, 선행 프로퍼티는 후행 프로퍼티에 의해 가려집니다.
+
+```ts
+//
+// A 클래스 선언
+function A() {
+    this.isA = true;
+}
+A.prototype.hello = function () {
+    console.log("Hello, A!");
+};
+
+//
+// B 클래스 선언
+function B() {
+    this.isB = true;
+}
+B.prototype.hello = function () {
+    console.log("Hello, B!");
+};
+
+//
+// A, B를 동시에 상속받는 클래스 선언
+function AB() {
+    A.call(this);
+    B.call(this);
+}
+AB.prototype = mixin(A, B);
+AB.prototype.constructor = AB;
+
+//
+// 테스팅
+const ab = new AB();
+console.log(ab); // AB { isA: true, isB: true }
+console.log(ab instanceof AB); // true
+console.log(ab instanceof A); // true
+console.log(ab instanceof B); // true
+ab.hello(); // "Hello, B!"
+```
