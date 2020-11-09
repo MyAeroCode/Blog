@@ -1144,7 +1144,7 @@ var Rectangle = function (id, x, y, width, height) {
     this.width = width;
     this.height = height;
 };
-Rectangle.prototype = Shape.prototype;
+Rectangle.prototype = Object.create(Shape.prototype);
 Rectangle.prototype.constructor = Rectangle;
 ```
 
@@ -1187,7 +1187,7 @@ function getBaseClass() {
 }
 
 function C() {}
-C.prototype = getBaseClass().prototype;
+C.prototype = Object.create(getBaseClass().prototype);
 C.prototype.constructor = C;
 
 console.log(new C().name); // "A" or "B"
@@ -1569,11 +1569,356 @@ const generatorExample = {
 
 ---
 
--   `DataStructure`
-    -   `Map`
-    -   `Set`
-    -   `WeakMap`
-    -   `WeakSet`
+# DataStructure
+
+## Map
+
+`Key-Value` 형태의 딕셔너리 자료구조입니다. `Object`와 유사하지만 다음과 같은 차이점이 있습니다.
+
+---
+
+### 의도하지 않은 키 방지
+
+`Object`를 딕셔너리를 사용하면 프로토타입에 정의된 요소들을 엔트리로 인식할 수 있습니다. 반면에 `Map`은 프로토타입이 없는 `Entry Container`에 엔트리를 담고 있으므로 명시적으로 제공한 키 외에는 어떤 키도 가지지 않습니다.
+
+**object :**
+
+```ts
+const map = {};
+map[1] = 1;
+console.log(map[0] !== undefined); // false
+console.log(map[1] !== undefined); // true
+console.log(map["toString"] !== undefined); // true
+```
+
+**map :**
+
+```ts
+const map = new Map();
+map.set(1, 1);
+console.log(map.has(0)); // false
+console.log(map.has(1)); // true
+console.log(map.has("toString")); // false
+```
+
+---
+
+---
+
+### 모든 형태의 키 허용
+
+`Object`의 키는 `String` 또는 `Symbol` 타입이어야 합니다. 만약 이외의 키를 저장한 경우 `String`으로 캐스팅됩니다. 반면에 `Map`은 모든 형태의 키를 허용하며, 키를 손상시키지 않습니다.
+
+**object :**
+
+```ts
+const map = {};
+map[1] = 123;
+map[true] = 456;
+map[{ name: "AeroCode" }] = 789;
+
+console.log(Object.keys(map));
+//
+// will print
+// ["1", "true", "[object Object]"]
+```
+
+**map :**
+
+```ts
+const map = new Map();
+map.set(1, 123);
+map.set(true, 456);
+map.set({ name: "AeroCode" }, 789);
+
+console.log([...map.keys()]);
+//
+// will print
+// [ 1, true, { name: 'AeroCode' } ]
+```
+
+---
+
+---
+
+### 삽입순서 유지
+
+`Map`은 추가적인 메모리를 사용하여 삽입된 순서를 유지합니다, 그러므로 `Map`을 순회하면 먼저 삽입된 요소가 먼저 출력됩니다. 반면에 `Object`의 키는 삽입순서를 유지하지 않습니다.
+
+**object :**
+
+```ts
+const map = {};
+map[+1] = +1;
+map[-1] = -1;
+map[0] = +0;
+
+console.log(Object.keys(map));
+//
+// will print
+// [ '0', '1', '-1' ]
+```
+
+**map :**
+
+```ts
+const map = new Map();
+map.set(+1, +1);
+map.set(-1, -1);
+map.set(0, 0);
+
+console.log([...map.keys()]);
+//
+// will print
+// [1, -1, 0]
+```
+
+---
+
+---
+
+### 엔트리 개수 파악
+
+`Map`의 엔트리 개수는 `size` 프로퍼티를 통해 쉽고 빠르게 알아낼 수 있지만, `Object`의 항목 수는 직접 계산해야 하고, 매우 느립니다.
+
+**object :**
+
+```ts
+const map = {};
+const keys = Object.keys(map); // 오버헤드 지점
+const size = keys.length;
+console.log(size);
+```
+
+**map :**
+
+```ts
+const map = new Map();
+console.log(map.size);
+```
+
+---
+
+---
+
+### 순회 프로토콜 지원
+
+`Map`은 순회 프로토콜을 지원하므로 `for of` 구문과 `Spread Operator`를 사용하여 간편하게 순회할 수 있지만, `Object`는 그렇지 않으므로, 먼저 모든 키를 알아내는 과정이 필요합니다.
+
+**object :**
+
+```ts
+const map = {};
+const keys = Object.keys(map); // 키부터 알아내야 한다.
+for (const key of keys) {
+    const val = map[key];
+    console.log(key, val);
+}
+```
+
+**map :**
+
+```ts
+const map = new Map();
+map.set(0, 1);
+map.set(2, 3);
+
+//
+// for of
+for (const [key, val] of map) {
+    console.log(key, val);
+}
+
+//
+// spread operator
+const entries = [...map];
+console.log(entries); // [ [ 0, 1 ], [ 2, 3 ] ]
+```
+
+---
+
+---
+
+### 퍼포먼스 비교
+
+데이터의 개수와 연산의 종류 상관없이, Key가 중복될수록 `Object`가 유리하고, Key가 중복되지 않을수록 `Map`이 유리합니다.
+
+**object가 유리한 케이스 :**
+
+```ts
+map[1] = 1;
+map[1] = 2;
+map[1] = 3;
+map[1] = 4;
+...
+map[1] = 987654321;
+```
+
+**map이 유리한 케이스 :**
+
+```ts
+map.set(1, 1);
+map.set(2, 2);
+map.set(3, 3);
+...
+map.set(987654321, 987654321);
+```
+
+---
+
+---
+
+### 언제 사용해야 하나?
+
+**object를 사용해야 하는 경우 :**
+
+-   저장할 데이터의 키가 중복되는 것이 많을 때. (= 대부분이 갱신일 때)
+-   객체인 경우가 더 자연스러운 경우. (= 쓸데없이 객체를 분리하여 맵 형태로 저장하지 말란 의미)
+
+```ts
+//
+// do
+const human = {
+    name: "AeroCode",
+    age: 25,
+    addr: "...",
+    hello: function () {
+        console.log("Hello, My name is " + this.name + "!");
+    },
+};
+
+//
+// don't
+const human = new Map();
+human.set("name", "AeroCode");
+human.set("age", 25);
+human.set("addr", "...");
+human.set("hello", function () {
+    console.log("Hello, My name is " + this.name + "!");
+});
+```
+
+**map을 사용해야 하는 경우 :**
+
+-   사용자의 입력에서 키를 받는 경우. (입력으로 `toString`와 같은 것이 들어올 수 있는 경우 `object.prototype.toString`과 충돌)
+-   저장된 데이터의 개수의 파악이 중요한 경우.
+-   문자열 외의 키를 허용해야 하는 경우.
+-   메모리를 좀 더 잡아먹더라도, 삽입된 순서가 중요한 경우.
+
+---
+
+---
+
+## Set
+
+`Key`만 저장할 수 있는 `Map`이라고 생각하면 됩니다. 그것을 제외한 대부분의 특성은 `Map`과 같습니다.
+
+-   삽입순 정렬
+-   의도치 않은 키 없음
+-   모든 형태의 키 허용
+-   순회 프로토콜 지원
+-   쉬운 엔트리 개수 파악
+
+`Object`와의 비교결과도 `Map`과 같습니다.
+
+-   중복될수록 object가 유리
+-   중복되지 않을수록 set이 유리
+
+---
+
+---
+
+## WeakMap
+
+### 메모리 누수
+
+엔트리의 키로 객체가 사용된 경우, 해당 객체가 스코프에서 사라지더라도 `Map`이 키의 목록을 유지하려고 강하게 참조하고 있기 때문에 `GC`의 대상이 되지 않습니다.
+
+```ts
+const map = new Map();
+function foo() {
+    const obj = {
+        hello: function () {
+            console.log("Hello, World!");
+        },
+    };
+    map.set(obj, "Hello!");
+
+    //
+    // 함수가 끝나는 시점에서 obj는 GC의 수집대상이 되어야 하지만,
+    // map이 obj를 강하게 붙잡고 있으므로 GC의 수집대상에서 벗어남.
+}
+foo();
+console.log([...map.keys()]); // [obj];
+```
+
+그러나 위와 같은 동작은 메모리 누수의 원인이 될 수 있습니다.
+
+```ts
+const map = new Map();
+function foo() {
+    for (let i = 0; i < 123456789; i++) {
+        const key = { idx: i };
+        const val = { val: i };
+        map.set(idx, val);
+    }
+}
+foo();
+console.log(map.size);
+//
+// will print 123456789
+// 메모리가 해제되지 않아...!
+```
+
+---
+
+---
+
+### 느슨한 참조
+
+따라서 `Map`에서 키 목록 유지 기능을 빼버린 `WeakMap`이 함께 등장했습니다. 더 이상 키 목록을 유지할 필요가 없기 때문에 키와의 연결이 느슨해지므로 `키로 사용된 객체`는 `GC`에 의해 수집될 수 있습니다.
+
+```ts
+const weakMap = new WeakMap();
+function foo() {
+    const obj = {
+        hello: function () {
+            console.log("Hello, World!");
+        },
+    };
+    weakMap.set(obj, "Hello!");
+    //
+    // weakMap은 obj를 붙잡고 있지 않으므로,
+    // obj는 GC에 의해 수거될 수 있다!
+}
+foo();
+```
+
+---
+
+---
+
+### Map과의 비교
+
+-   `Map`과 달리 키 목록 유지기능이 없음.
+    -   즉, 키 목록을 얻을 수 있는 방법이 없음.
+    -   즉, `.keys()` 메서드를 지원하지 않음.
+    -   즉, `Iterator Protocol`을 지원하지 않음.
+    -   즉, 메모리 누수를 예방할 수 있음.
+-   `Map`과 달리 `Primitive Type`을 키로 지정할 수 없음.
+
+---
+
+---
+
+## WeakSet
+
+`WeakMap`과 그 특성이 같습니다.
+
+---
+
+---
+
 -   `TypedArrays`
 -   `Promise`
 -   `Meta-Programming`
