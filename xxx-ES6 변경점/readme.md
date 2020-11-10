@@ -1919,13 +1919,383 @@ foo();
 
 ---
 
--   `TypedArrays`
--   `Promise`
--   `Meta-Programming`
-    -   `Proxy`
-    -   `Reflection`
--   `Localization`
-    -   `Collation`
-    -   `Number Formatting`
-    -   `Currency Formatting`
-    -   `Date/Time Formatting`
+# TypedArrays
+
+## 개요
+
+기본적으로는 `Array`와 같지만 숫자값만 저장할 수 있다는 것이 특징입니다. 내부적으로는 `ArrayBuffer`를 사용하여 바이트 단위로 읽기/쓰기를 수행하는 `DataView`의 일종입니다.
+
+```ts
+Int8Array;
+Uint8Array;
+Int16Array;
+Uint16Array;
+Int32Array;
+Uint32Array;
+Float32Array;
+Float64Array;
+```
+
+---
+
+---
+
+## Array와의 비교
+
+`Array`는 동적크기 배열이지만 `TypedArray`는 고정크기 배열입니다. 내부적으로 참조하는 `ArrayBuffer`의 크기를 변경할 수 없기 때문입니다.
+
+```ts
+//
+// Array는 배열의 크기가 늘어날 수 있다.
+const array = new Array(5);
+console.log(array.length); // 5
+array.push(5);
+console.log(array.length); // 6
+```
+
+---
+
+`TypedArray`는 `Array`와 다르게 범위를 벗어난 데이터를 저장 시, 손실이 발생할 수 있습니다.
+
+```ts
+const array = new Int8Array(1);
+
+//
+// 12345 = 0b 00110000 00111001
+// Int8Array는 1바이트만 저장할 수 있으므로,
+// 12345의 마지막 바이트인 00111001만 저장된다.
+array[0] = 12345;
+
+//
+// 0b00111001 = 57
+console.log(array[0]); // 57
+```
+
+---
+
+---
+
+# Promise
+
+## Callback Hell
+
+프로마이즈는 아래와 같은 콜백지옥 문제를 해결하기 위해 등장한 `비동기 작업 실행자`입니다. 콜백지옥은 코드의 패딩을 증가시키고, 가독성을 크게 저하시킵니다.
+
+```ts
+do_1st(
+    initVal,
+    function (result) {
+        do_2nd(
+            result,
+            function (result) {
+                do_3nd(
+                    result,
+                    function (result) {
+                        do_4nd(result, function (result) {
+                            // ...
+                        });
+                    },
+                    failureCallback_1
+                );
+            },
+            failureCallback_2
+        );
+    },
+    failureCallback_3
+);
+```
+
+---
+
+---
+
+## Chaining
+
+프로마이즈는 또 다른 프로마이즈와 연결될 수 있는데, 이러한 특성을 사용하여 콜백지옥 문제를 해결합니다. 이것을 `Promise Chaining`이라고 부릅니다.
+
+```ts
+promiseObject
+    .then(nextCallback_1, failureCallback_1)
+    .then(nextCallback_2, failureCallback_2)
+    .then(nextCallback_3, failureCallback_3);
+```
+
+`failureCallback`이 모두 같다면 다음과 같이 축약할 수 있습니다.
+
+```ts
+promiseObject
+    .then(nextCallback_1)
+    .then(nextCallback_2)
+    .then(nextCallback_3)
+    .catch(failureCallback);
+```
+
+---
+
+---
+
+## 프로마이즈의 상태
+
+프로마이즈는 다음 3가지 중 하나를 갖습니다.
+
+-   대기 (`pending`) : `resolve` 또는 `reject`되지 않은 초기 상태
+-   이행 (`fulfilled`) : 프로마이즈가 `resolve`된 상태
+-   거부 (`rejected`) : 프로마이즈가 `reject`된 상태
+
+---
+
+```ts
+//
+// 프로마이즈가 생성될 당시에는 아직 pending 상태.
+// 곧, 프로마이즈의 내부로직이 실행됨.
+const promiseObject = new Promise((resolve, reject) => {
+    console.log("in Promise");
+    if (Math.random() < 0.5) {
+        //
+        // 아래 메서드 실행 후, fulfilled 상태로 변함.
+        resolve("Success");
+    } else {
+        //
+        // 아래 메서드 실행 후, rejected 상태로 변함.
+        reject("Fail");
+    }
+});
+
+//
+// 이미 프로마이즈가 실행되어 pending 상태에서 벗어났으므로,
+// "done" 에 앞서 "in Promise"가 출력됨.
+console.log("done");
+```
+
+```
+in Promise
+done
+```
+
+---
+
+---
+
+## 콜백과의 차이
+
+`CallBack`은 동기식이지만 `Promise`는 비동기로 작동합니다. 즉, `CallBack`은 후행 코드들을 블럭킹합니다.
+
+**CallBack :**
+
+```ts
+function doSomething(onSuccess, onFailure) {
+    try {
+        console.log("in doSomething");
+        if (Math.random() < 0.5) {
+            throw new Error();
+        }
+        const result = "Hello, World!";
+        onSuccess(result);
+    } catch (reason) {
+        onFailure(reason);
+    }
+}
+
+function main() {
+    console.log("start");
+    doSomething(
+        (result) => console.log("success"),
+        (reason) => console.log("failure")
+    );
+    console.log("end");
+}
+main();
+```
+
+```
+start
+in doSomething
+success // or failure
+end
+```
+
+**Promise :**
+
+```ts
+const doSomething = new Promise((resolve, reject) => {
+    console.log("in doSomething");
+    if (Math.random() < 0.5) {
+        const result = "Hello, World!";
+        resolve(result); // = return
+    } else {
+        reject(); // = throw
+    }
+});
+
+function main() {
+    console.log("start");
+    doSomething
+        .then((result) => console.log("success"))
+        .catch((reason) => console.log("failure"));
+    console.log("end");
+}
+main();
+```
+
+```
+in doSomething
+start
+end
+success // or failure
+```
+
+---
+
+---
+
+## 다수의 프로마이즈 관리
+
+### Promise.all()
+
+`iteratorable`에 저장된 프로마이즈가 전부 이행되어야 `fulfilled`, 하나라도 거절되면 `rejected` 상태로 변하는 프로마이즈를 생성합니다.
+
+```ts
+function makeRandomPromise() {
+    return new Promise((resolve, reject) => {
+        if (Math.random() < 0.5) {
+            resolve();
+        } else {
+            reject();
+        }
+    });
+}
+
+const promises = [];
+for (let i = 0; i < 3; i++) {
+    const promise = makeRandomPromise();
+    promises.push(promise);
+}
+
+Promise.all(promises)
+    .then(() => console.log("모든 프로마이즈가 이행됨."))
+    .catch(() => console.log("어떤 프로마이즈가 거절됨."));
+```
+
+---
+
+---
+
+### Promise.race()
+
+`iteratorable`에 저장된 프로마이즈 중, 가장 빠르게 상태가 변화한 프로마이즈의 상태를 사용합니다. 즉, 가장 빨리 처리된 프로마이즈의 상태가 이행이라면 `fulfilled`로, 거절이라면 `rejected`로 변화하는 프로마이즈를 생성합니다.
+
+```ts
+function makeDelayPromise(delay: number) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (Math.random() < 0.5) {
+                resolve(`resolved with ${delay}`);
+            } else {
+                reject(`rejected with ${delay}`);
+            }
+        }, delay);
+    });
+}
+
+const promises = [];
+for (let i = 0; i < 3; i++) {
+    const delay = Math.floor(Math.random() * 1000);
+    const promise = makeDelayPromise(delay);
+    promises.push(promise);
+}
+
+Promise.race(promises)
+    .then((v) => console.log(v))
+    .catch((v) => console.log(v));
+```
+
+---
+
+---
+
+# Meta Programming
+
+## Proxy
+
+특정 객체에 접근하기 전에 훅을 먼저 실행하는 대리자를 생성합니다.
+
+```ts
+const object = {
+    name: "Sample Object",
+    desc: "Hello, World!",
+};
+
+const objectProxy = new Proxy(object, {
+    get: function (target, key) {
+        if (key in target) {
+            return target[key];
+        }
+        throw new Error(`No such key.`);
+    },
+});
+
+const name = objectProxy.name; // OK
+const addr = objectProxy.addr; // error
+```
+
+---
+
+가능한 훅은 다음과 같습니다.
+
+```ts
+interface ProxyHandler<T extends object> {
+    getPrototypeOf?(target: T): object | null;
+    setPrototypeOf?(target: T, v: any): boolean;
+    isExtensible?(target: T): boolean;
+    preventExtensions?(target: T): boolean;
+    getOwnPropertyDescriptor?(
+        target: T,
+        p: PropertyKey
+    ): PropertyDescriptor | undefined;
+    has?(target: T, p: PropertyKey): boolean;
+    get?(target: T, p: PropertyKey, receiver: any): any;
+    set?(target: T, p: PropertyKey, value: any, receiver: any): boolean;
+    deleteProperty?(target: T, p: PropertyKey): boolean;
+    defineProperty?(
+        target: T,
+        p: PropertyKey,
+        attributes: PropertyDescriptor
+    ): boolean;
+    enumerate?(target: T): PropertyKey[];
+    ownKeys?(target: T): PropertyKey[];
+    apply?(target: T, thisArg: any, argArray?: any): any;
+    construct?(target: T, argArray: any, newTarget?: any): object;
+}
+```
+
+---
+
+---
+
+## Reflect
+
+흩어져있는 객체, 함수, 생성자 관련 함수들을 한데 묶어놓은 유틸리티 객체입니다.
+
+```ts
+Reflect.apply();
+Reflect.construct();
+Reflect.defineProperty();
+Reflect.deleteProperty();
+Reflect.get();
+Reflect.getOwnPropertyDescriptor();
+Reflect.getPrototypeOf();
+Reflect.has();
+Reflect.isExtensible();
+Reflect.ownKeys();
+Reflect.preventExtensions();
+Reflect.set();
+Reflect.setPrototypeOf();
+```
+
+---
+
+---
+
+# Localization
+
+각 나라에 맞는 통화, 날짜 형식으로 포맷팅하는 유틸리티를 제공합니다.
