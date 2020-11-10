@@ -1464,7 +1464,9 @@ const values = [...list]; // ["a", "b"];
 
 ## Generators
 
-`yield` 키워드로 요소를 제공합니다. `iterator`보다 훨씬 유연하고 정교한 작업이 가능합니다. 함수의 이름 앞에 \*을 붙이면 `Generators`로 정의됩니다.
+### 기본 사용법
+
+`yield` 키워드로 요소를 프로토콜에 제공할 수 있으며, `yield`는 독특한 특성이 있기 때문에 `iterator`보다 훨씬 유연하고 정교한 작업이 가능합니다. 함수의 이름 앞에 \*을 붙이면 `Generators`로 정의됩니다.
 
 **선언 :**
 
@@ -1484,35 +1486,165 @@ const fibonacci = {
 };
 ```
 
-**구현 :**
+---
+
+---
+
+### 프로토콜 읽기/쓰기
+
+먼저 `yield v`표현식을 통해, 값을 프로토콜에 제공할 수 있습니다.
 
 ```ts
-function* fibonacci() {
-    let pre = 0,
-        cur = 1;
-    while (true) {
-        [pre, cur] = [cur, pre + cur];
-
-        //
-        // cur를 넘겨주고 자신은 일시정지.
-        yield cur;
-    }
+function* generator() {
+    yield "Hello, World!";
+    yield 12345;
 }
-for (const f of fibonacci) {
-    //
-    // 멈추지 않으면 계속 생성됨.
-    if (1000 <= f) {
-        break;
-    }
-    console.log(f);
+```
+
+위의 형식으로 프로토콜에 제공된 요소들은 `Spread Operator`, `for-of`로 읽을 수 있습니다.
+
+```ts
+//
+// Spread Operator
+const recived = [...generator()];
+
+//
+// for-of
+const recived = [];
+for (const e of generator()) {
+    recived.push(e);
+}
+```
+
+또는 `Generator.prototype.next()`를 사용하여 읽을 수 있습니다. 해당 메서드는 다음과 같은 형태의 값을 반환합니다.
+
+```ts
+{
+    value : "Hello, World!", // 이번 차례에 제공된 값.
+    done : false // 더 이상 제공할 요소가 없다면 true.
+}
+```
+
+즉, 더 이상 제공할 요소가 없어질 때 까지 `next()`를 반복하면 됩니다.
+
+```ts
+const recived = [];
+const g = generator();
+let next = g.next();
+while (next.done === false) {
+    recived.push(next.value);
+    next = g.next();
 }
 ```
 
 ---
 
-**Iterator와의 차이점 :**
+---
 
-제너레이터는 함수형태로 작성시 직접적으로 인자를 받을 수 있습니다.
+### 라이프사이클
+
+제네레이터 함수는 기본적으로 프로토콜 읽기 요청을 받은 경우에만 동작합니다. 예를 들어, 아래의 코드는 제네레이터를 생성하긴 했지만, 프로토콜을 읽는 요청이 없으므로 `console.log()`에 도달하지 않습니다.
+
+```ts
+function* generator() {
+    console.log("Hello, World!"); // 여기에 도달하지 못함.
+    yield 1;
+}
+const g = generator();
+```
+
+---
+
+프로토콜 읽기 요청을 감지하면 제네레이터 함수의 내부가 실행되며, 다음 `yield`에 제공된 값을 프로토콜에 넘기고, 즉시 일시정지합니다.
+
+```ts
+function* generator() {
+    yield 1; // 프로토콜에 값을 넘기고 즉시 일시정지.
+    console.log("Hello, World!"); // 여기에 도달하지 못함.
+}
+const g = generator();
+console.log(g.next().value); // 읽기 요청
+```
+
+---
+
+다음 읽기 요청이 들어오면, 일시정지했던 지점에서 다시 시작합니다.
+
+```ts
+function* generator() {
+    yield 1; // 실행 후, 첫 번째 일시정지
+    yield 2; // 실행 후, 두 번째 일시정지
+    console.log("Hello, World!"); // 여기에 도달하지 못함.
+}
+const g = generator();
+console.log(g.next().value); // 첫 번째 읽기 요청
+console.log(g.next().value); // 두 번째 읽기 요청
+```
+
+---
+
+마지막으로 제네레이터 함수의 끝에 도달하면 프로토콜을 닫습니다.
+
+---
+
+---
+
+### yield 표현식의 값 설정하기
+
+`yield n`도 표현식이므로 값으로 평가될 수 있으며, 기본값은 `undefined` 입니다. (아래의 코드에서 yield)
+
+```ts
+function* generator() {
+    //
+    // yield가 호출되면 즉시 일시정지되므로,
+    // console.log는 다음번 읽기요청에서 처리됩니다.
+    console.log(yield 1);
+
+    //
+    // yield2는 호출되지만,
+    // console.log에는 도달하지 않습니다.
+    console.log(yield 2);
+}
+const g = generator();
+console.log(g.next().value);
+console.log(g.next().value);
+
+//
+// will prints
+// 1
+// undefined
+// 2
+```
+
+---
+
+`yield n`의 표현식의 결과값을 설정하고 싶다면 `Generator.prototype.next()`에 그것을 넘기면 됩니다.
+
+```ts
+function* generator() {
+    console.log(yield 1); // yield 1이 "a"로 평가됨.
+    console.log(yield 2);
+}
+const g = generator();
+console.log(g.next("a").value);
+console.log(g.next("b").value);
+
+//
+// will prints
+// 1
+// "a"
+// 2
+```
+
+---
+
+---
+
+### Iterator와 비교
+
+-   제네레이터의 함수 한 번당 여러개의 요소를 전달할 수 있지만, 이터레이터는 함수 한 번당 1개의 요소만을 전달할 수 있습니다.
+-   제네레이터는 함수가 중간에 일시정지될 수 있지만, 이터레이터는 그렇지 않습니다.
+-   제네레이터는 함수 형태로 작성하면, 직접적으로 인자를 받을 수 있습니다.
 
 ```ts
 function* range(srt, end) {
@@ -1529,41 +1661,7 @@ for (const n of range(3, 6)) {
 const r = [...range(3, 6)]; // [3, 4, 5];
 ```
 
----
-
-제네레이터는 다르게 여러곳에서 `yield`를 사용할 수 있으므로, 이터레이터보다 더 유연하게 요소를 제공할 수 있습니다.
-
-```ts
-//
-// 이터레이터
-const iteratorExample = {
-    [Symbol.iterator]() {
-        let count = 0;
-        return {
-            next() {
-                return {
-                    value: count++,
-                    done: false,
-                };
-            },
-        };
-    },
-};
-
-//
-// 제너레이터
-const generatorExample = {
-    *[Symbol.iterator]() {
-        let count = 0;
-
-        //
-        // 여러 군데에서 yield 가능!
-        yield count++;
-        while (true) yield count++;
-        yield count++;
-    },
-};
-```
+-   모든 이터레이터는 제네레이터로 바꿔쓸 수 있지만, 어떤 제네레이터는 이터레이터로 바꿔쓸 수 없습니다.
 
 ---
 
