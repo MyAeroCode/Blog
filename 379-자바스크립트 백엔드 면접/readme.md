@@ -68,8 +68,8 @@ const rabbit = {
 rabbit.__proto__ = animal;
 
 console.log(rabbit); // { jump: true } rabbit에 eats는 없다!
-console.log(rabbit.jump); // true.
-console.log(rabbit.eats); // true. why?
+console.log(rabbit.jump); // true
+console.log(rabbit.eats); // true
 ```
 
 ---
@@ -77,21 +77,23 @@ console.log(rabbit.eats); // true. why?
 **관련 코드 2 :**
 
 ```ts
-function Animal() {
-    this.eats = true;
-}
+function Animal() {}
+Animal.prototype.eats = true;
+
 function Rabbit() {
-    this.__proto__ = new Animal();
     this.jump = true;
 }
+Rabbit.prototype = Object.create(Animal.prototype);
+Rabbit.prototype.constructor = Rabbit;
 
-const rabbit = new Rabbit(); // { jump: true }
-console.log(rabbit.jump); // true.
-console.log(rabbit.eats); // true. why?
+const rabbit = new Rabbit();
+console.log(rabbit); // { jump: true }
+console.log(rabbit.jump); // true
+console.log(rabbit.eats); // true.
 
 console.log(rabbit.sleep); // undefined
 Animal.prototype.sleep = true;
-console.log(rabbit.sleep); // true. why?
+console.log(rabbit.sleep); // true
 ```
 
 ---
@@ -107,12 +109,15 @@ function Animal() {
     this.eats = true;
 }
 function Rabbit() {
-    this.__proto__ = new Animal();
+    Animal.call(this);
     this.jump = true;
 }
+Rabbit.prototype = Object.create(Animal.prototype);
+Rabbit.prototype.constructor = Rabbit;
+
 const rabbit = new Rabbit();
 for (const key in rabbit) {
-    console.log(key); // "eats", "jump"
+    console.log(key); // "eats", "jump", "constructor"
 }
 ```
 
@@ -194,24 +199,6 @@ const color = Color.R;
 
 ---
 
-#### `let 문법없이 let을 구현하려면 어떻게 해야 하나요?`
-
-`configurable = false, else true` 옵션으로 컨텍스트에 defineProperty를 사용합니다.
-
-```ts
-const context = typeof global === "object" ? global : window;
-Object.defineProperty(context, "PI", {
-    value: 3.141593,
-    enumerable: true, // 프로퍼티 노출
-    writeable: true, // 할당 연산자로 변경가능
-    configurable: false, // 프로퍼티 덮어쓰기, 삭제 불가
-});
-```
-
----
-
----
-
 #### `const 문법없이 const를 구현하려면 어떻게 해야 하나요?`
 
 `writable = false, configurable = false, else true` 옵션으로 컨텍스트에 defineProperty를 사용합니다.
@@ -224,6 +211,105 @@ Object.defineProperty(context, "PI", {
     writable: false, // 할당 연산자로 변경불가
     configurable: false, // 프로퍼티 덮어쓰기, 삭제 불가
 });
+```
+
+---
+
+---
+
+#### `ES7`에서는 `Async/Await` 문법이 없는데 동일한 기능을 갖는 코드를 작성하려면 어떻게 해야 하나요?
+
+제네레이터와 프로마이즈를 사용하여 구현할 수 있습니다.
+
+```ts
+function __await(thisArg, _arguments, generator) {
+    function adopt(value) {
+        return value instanceof Promise
+            ? value
+            : new Promise(function (resolve) {
+                  resolve(value);
+              });
+    }
+
+    return new Promise(function (resolve, reject) {
+        generator = generator.apply(thisArg, _arguments || []);
+
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+
+        function rejected(value) {
+            try {
+                step(generator.throw(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+
+        function step(result) {
+            result.done
+                ? resolve(result.value)
+                : adopt(result.value).then(fulfilled, rejected);
+        }
+        step(generator.next());
+    });
+}
+```
+
+이제 `async / await`를 구현할 수 있습니다.
+
+**ES 8:**
+
+```ts
+function asyncSleep(t) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, t);
+    });
+}
+
+async function asyncGenerateHello() {
+    await sleep(123);
+    await sleep(456);
+    return "Hello, World!";
+}
+
+async function main() {
+    const hello = await asyncGenerateHello();
+    console.log(hello);
+}
+
+main();
+```
+
+**ES 7:**
+
+```ts
+function asyncSleep(t) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, t);
+    });
+}
+
+function asyncGenerateHello() {
+    return __await(this, undefined, function* () {
+        yield asyncSleep(123);
+        yield asyncSleep(456);
+        return "Hello, World!";
+    });
+}
+
+function main() {
+    return __await(this, undefined, function* () {
+        const hello = yield asyncGenerateHello();
+        console.log(hello);
+    });
+}
+
+main();
 ```
 
 ---
@@ -391,7 +477,35 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 
 #### `ES2016(ES7)에서 추가된 기능을 아는대로 말해주세요`
 
-**요약 :**
+-   `Array.prototype.includes`
+
+**ES 7:**
+
+```ts
+list.includes(4);
+list.includes(4, 2);
+```
+
+**ES 6:**
+
+```ts
+list.indexOf(4) !== -1;
+list.indexOf(4, 2) !== -1;
+```
+
+-   `Exponentiation Operator`
+
+**ES 7:**
+
+```ts
+const a = 2 ** 3;
+```
+
+**ES 6:**
+
+```ts
+const a = Math.pow(2, 3);
+```
 
 ---
 
@@ -399,7 +513,19 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 
 #### `ES2017(ES8)에서 추가된 기능을 아는대로 말해주세요`
 
-**요약 :**
+-   `Async / Await`
+-   `Function`
+    -   `New Features`
+        -   `Param Trailing Commas`
+-   `Object`
+    -   `New Methods`
+        -   `values()`
+        -   `entries()`
+-   `String`
+    -   `New Methods`
+        -   `padStart()`
+        -   `padEnd()`
+        -   `getOwnPropertyDescriptors()`
 
 ---
 
