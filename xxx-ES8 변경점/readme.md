@@ -92,78 +92,50 @@ function getHello() {
 **ES 8:**
 
 ```ts
-async function getHello() {
-    // 3초를 기다리는 프로마이즈가 fulfilled 될 때 까지 대기한다.
-    await new Promise((resolve, reject) => {
-        // 3초를 기다리고 resolve 한다.
-        setTimeout(resolve, 3000);
+function asyncSleep(t) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, t);
     });
+}
 
+async function asyncGenerateHello() {
+    await sleep(123);
+    await sleep(456);
     return "Hello, World!";
 }
 
 async function main() {
-    const hello = await getHello();
+    const hello = await asyncGenerateHello();
     console.log(hello);
 }
+
+main();
 ```
 
 **ES 7:**
 
 ```ts
-//
-// 제네레이터를 이용한 await 문법의 구현
-function __await(thisArg, _arguments, generator) {
-    function adopt(value) {
-        return value instanceof Promise
-            ? value
-            : new Promise(function (resolve) {
-                  resolve(value);
-              });
-    }
-
-    return new Promise(function (resolve, reject) {
-        generator = generator.apply(thisArg, _arguments || []);
-
-        function fulfilled(value) {
-            try {
-                step(generator.next(value));
-            } catch (e) {
-                reject(e);
-            }
-        }
-
-        function rejected(value) {
-            try {
-                step(generator.throw(value));
-            } catch (e) {
-                reject(e);
-            }
-        }
-
-        function step(result) {
-            result.done
-                ? resolve(result.value)
-                : adopt(result.value).then(fulfilled, rejected);
-        }
-        step(generator.next());
+function asyncSleep(t) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, t);
     });
 }
 
-function getHello() {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve("Hello, World!");
-        }, 3000);
+function asyncGenerateHello() {
+    return __await(this, undefined, function* () {
+        yield asyncSleep(123);
+        yield asyncSleep(456);
+        return "Hello, World!";
     });
 }
 
 function main() {
     return __await(this, undefined, function* () {
-        const hello = yield getHello();
+        const hello = yield asyncGenerateHello();
         console.log(hello);
     });
 }
+
 main();
 ```
 
@@ -185,15 +157,168 @@ main();
 
 ---
 
--   `Function`
-    -   `New Features`
-        -   `Param Trailing Commas`
--   `Object`
-    -   `New Methods`
-        -   `values()`
-        -   `entries()`
--   `String`
-    -   `New Methods`
-        -   `padStart()`
-        -   `padEnd()`
-        -   `getOwnPropertyDescriptors()`
+# Function
+
+## New Features
+
+### Param Trailing Commas
+
+함수를 호출하거나 정의할 때, 인자의 끝으로 컴마가 허용됩니다.
+
+```text
+function foo(param1, param2, ) {}
+foo(123, 'abc', );
+```
+
+---
+
+---
+
+# Object
+
+## New Methods
+
+### entries()
+
+`Object.keys()`와 유사하게, 자신만의 열거가능한 프로퍼티들의 키와 값의 페어를 배열 형태(`Array<[key, val]>`)로 리턴합니다. 즉, 아래의 프로퍼티는 무시됩니다.
+
+-   상위 프로토체인에 있는 부모들의 프로퍼티
+-   열거불가 속성으로 정의된 프로퍼티
+
+```ts
+//
+// 동물 클래스
+function Animal(type) {
+    this.type = type;
+}
+Animal.prototype.isAnimal = true;
+
+//
+// 고양이 클래스
+function Cat(name) {
+    Animal.call(this, "cat");
+    this.name = name;
+    Object.defineProperty(this, "address", {
+        value: "secrect",
+        // writable: false,
+        // enumerable: false,
+        // configurable: false,
+    });
+}
+Cat.prototype = Object.create(Animal.prototype);
+Cat.prototype.constructor = Cat;
+Cat.prototype.age = 0;
+
+//
+// 테스팅
+const cat = new Cat("navi");
+console.log(Object.entries(cat));
+
+//
+// will prints
+// [ [ 'type', 'cat' ], [ 'name', 'navi' ] ]
+```
+
+**출력이 안된 프로퍼티 :**
+
+-   `Animal.prototype.isAnimal` : 상위 프로토체인의 프로퍼티는 무시됩니다.
+-   `Cat.address` : 열거불가 프로퍼티는 무시됩니다.
+
+---
+
+---
+
+### values()
+
+기본적으로는 `keys()`, `entries()`와 같지만 값만 반환합니다.
+
+```ts
+const cat = new Cat("navi");
+console.log(Object.entries(cat));
+
+//
+// will prints
+// [ 'cat', 'navi' ]
+```
+
+---
+
+---
+
+### getOwnPropertyDescriptors()
+
+상위 프로토체인의 프로퍼티를 제외한 모든 프로퍼티의 디스크립터를 가져옵니다.
+
+```ts
+const cat = new Cat("navi");
+console.log(Object.getOwnPropertyDescriptors(cat));
+```
+
+**will prints :**
+
+```ts
+{
+    type: {
+        value: "cat",
+        writable: true,
+        enumerable: true,
+        configurable: true,
+    },
+    name: {
+        value: "navi",
+        writable: true,
+        enumerable: true,
+        configurable: true,
+    },
+    address: {
+        value: "secrect",
+        writable: false,
+        enumerable: false,
+        configurable: false,
+    },
+};
+```
+
+---
+
+---
+
+# String
+
+## New Methods
+
+### padStart()
+
+글자수가 맞춰지도록 문자열의 앞에 적절한 패딩을 삽입합니다. 아래의 예제에서 `padStart`는 문자열 `"123"`이 5글자가 되도록 앞쪽에 2글자 공백을 삽입합니다.
+
+```ts
+function wrapString(str) {
+    return `"${str}"`;
+}
+const str = "123".padStart(5);
+console.log(wrapString(str));
+//
+// will prints
+// "  123"
+```
+
+두 번째 인자로 삽입할 문자열을 지정할 수 있습니다.
+
+```ts
+function wrapString(str) {
+    return `"${str}"`;
+}
+const str = "123".padStart(10, "abc");
+console.log(wrapString(str));
+//
+// will prints
+// "abcabca123"
+```
+
+---
+
+---
+
+### padEnd()
+
+기본적으로는 `padStart()`와 같지만 패딩을 뒤쪽에 삽입합니다.
