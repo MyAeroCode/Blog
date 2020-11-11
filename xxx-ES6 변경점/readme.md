@@ -1583,7 +1583,19 @@ console.log(g.next().value); // 두 번째 읽기 요청
 
 ---
 
-마지막으로 제네레이터 함수의 끝에 도달하면 프로토콜을 닫습니다.
+마지막으로 제네레이터 함수의 끝(또는 리턴문)에 도달하면 프로토콜에 `return value`를 전달하고 프로토콜을 닫습니다. 리턴문이 없다면 `undefined`가 반환됩니다.
+
+```ts
+function* generator() {
+    yield 1; // 실행 후, 첫 번째 일시정지
+    yield 2; // 실행 후, 두 번째 일시정지
+    return 3; // 실행 후, 프로토콜 닫음
+}
+const g = generator();
+console.log(g.next().value); // 1, done: false
+console.log(g.next().value); // 2, done: false
+console.log(g.next().value); // 3, done: true
+```
 
 ---
 
