@@ -531,13 +531,45 @@ const a = Math.pow(2, 3);
 
 #### `ES2018(ES9)에서 추가된 기능을 아는대로 말해주세요`
 
-**요약 :**
+-   `Async`
+    -   `Async Iterator / for await of`
+    -   `Promise.prototype.finally()`
+-   `Object`
+    -   `New Features`
+        -   `Rest Properties`
+        -   `Spread Properties`
+-   `RegExp`
+    -   `Named Capture Groups`
+    -   `Unicode Property Escapes`
+    -   `Lookbehind Assertions`
+    -   `s(dotAll)`
 
 ---
 
 #### `ES2019(ES10)에서 추가된 기능을 아는대로 말해주세요`
 
-**요약 :**
+-   `String`
+    -   `New Methods`
+        -   `trimStart()`
+        -   `trimEnd()`
+-   `Object`
+    -   `New Methods`
+        -   `fromEntries()`
+-   `Array`
+    -   `New Methods`
+        -   `flat()`
+        -   `flatMap()`
+        -   `Stable Array.sort()`
+-   `Function`
+    -   `Changed`
+        -   `toString()`
+-   `Symbol`
+    -   `New Features`
+        -   `description`
+-   `JSON`
+    -   `Superset`
+    -   `Well-formed JSON.stringify()`
+-   `Optional Catch Binding`
 
 ---
 
@@ -545,7 +577,19 @@ const a = Math.pow(2, 3);
 
 #### `ES2020(ES11)에서 추가된 기능을 아는대로 말해주세요`
 
-**요약 :**
+-   `BigInt`
+-   `globalThis`
+-   `Module`
+    -   `Dynamic Import`
+    -   `Module Namespace Exports`
+    -   `import.meta`
+-   `New Syntax`
+    -   `Nullish Coalescing`
+    -   `Optional Chaining`
+-   `New Methods`
+    -   `Promise.allSettled`
+    -   `String.matchAll()`
+-   `Well defined for-in order`
 
 ---
 
