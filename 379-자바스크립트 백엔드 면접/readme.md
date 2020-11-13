@@ -477,35 +477,12 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 
 #### `ES2016(ES7)에서 추가된 기능을 아는대로 말해주세요`
 
--   `Array.prototype.includes`
-
-**ES 7:**
-
-```ts
-list.includes(4);
-list.includes(4, 2);
-```
-
-**ES 6:**
-
-```ts
-list.indexOf(4) !== -1;
-list.indexOf(4, 2) !== -1;
-```
-
+-   `Array`
+    -   `New Methods`
+        -   `Array.prototype.includes`
 -   `Exponentiation Operator`
 
-**ES 7:**
-
-```ts
-const a = 2 ** 3;
-```
-
-**ES 6:**
-
-```ts
-const a = Math.pow(2, 3);
-```
+[출처] [JavaScript History es7~es9](https://medium.com/@madasamy/javascript-brief-history-and-ecmascript-es6-es7-es8-features-673973394df4)
 
 ---
 
@@ -527,6 +504,8 @@ const a = Math.pow(2, 3);
         -   `padEnd()`
         -   `getOwnPropertyDescriptors()`
 
+[출처] [JavaScript History es7~es9](https://medium.com/@madasamy/javascript-brief-history-and-ecmascript-es6-es7-es8-features-673973394df4)
+
 ---
 
 #### `ES2018(ES9)에서 추가된 기능을 아는대로 말해주세요`
@@ -543,6 +522,8 @@ const a = Math.pow(2, 3);
     -   `Unicode Property Escapes`
     -   `Lookbehind Assertions`
     -   `s(dotAll)`
+
+[출처] [JavaScript History es7~es9](https://medium.com/@madasamy/javascript-brief-history-and-ecmascript-es6-es7-es8-features-673973394df4)
 
 ---
 
@@ -571,6 +552,8 @@ const a = Math.pow(2, 3);
     -   `Well-formed JSON.stringify()`
 -   `Optional Catch Binding`
 
+[출처] [JavaScript History es10, es11](https://medium.com/@amandeepkochhar/javascript-es10-new-features-in-ecmascript-10-es2019-version-2e5ac8c46493)
+
 ---
 
 ---
@@ -590,6 +573,8 @@ const a = Math.pow(2, 3);
     -   `Promise.allSettled`
     -   `String.matchAll()`
 -   `Well defined for-in order`
+
+[출처] [JavaScript History es10, es11](https://medium.com/@amandeepkochhar/javascript-es10-new-features-in-ecmascript-10-es2019-version-2e5ac8c46493)
 
 ---
 
