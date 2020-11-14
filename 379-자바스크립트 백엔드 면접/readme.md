@@ -511,8 +511,12 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 #### `ES2018(ES9)에서 추가된 기능을 아는대로 말해주세요`
 
 -   `Async`
-    -   `Async Iterator / for await of`
     -   `Promise.prototype.finally()`
+    -   `Async Iterator`
+        -   `for-await-of`
+        -   `Symbol.asyncIterator`
+-   `String`
+    -   `Lifting Template Literal Restriction`
 -   `Object`
     -   `New Features`
         -   `Rest Properties`
@@ -521,7 +525,7 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
     -   `Named Capture Groups`
     -   `Unicode Property Escapes`
     -   `Lookbehind Assertions`
-    -   `s(dotAll)`
+    -   `s flag (dotAll)`
 
 [출처] [JavaScript History es7~es9](https://medium.com/@madasamy/javascript-brief-history-and-ecmascript-es6-es7-es8-features-673973394df4)
 
