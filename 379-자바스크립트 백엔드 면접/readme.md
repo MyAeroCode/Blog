@@ -541,19 +541,21 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
     -   `New Methods`
         -   `fromEntries()`
 -   `Array`
+    -   `Enhanced`
+        -   `Stable sort()`
     -   `New Methods`
         -   `flat()`
         -   `flatMap()`
-        -   `Stable Array.sort()`
 -   `Function`
-    -   `Changed`
+    -   `Enhanced`
         -   `toString()`
 -   `Symbol`
     -   `New Features`
         -   `description`
 -   `JSON`
-    -   `Superset`
-    -   `Well-formed JSON.stringify()`
+    -   `Enhanced`
+        -   `JSON ⊂ ECMAScript (JSON SuperSet)`
+        -   `Well-formed JSON.stringify()`
 -   `Optional Catch Binding`
 
 [출처] [JavaScript History es10, es11](https://medium.com/@amandeepkochhar/javascript-es10-new-features-in-ecmascript-10-es2019-version-2e5ac8c46493)
