@@ -566,21 +566,30 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 
 #### `ES2020(ES11)에서 추가된 기능을 아는대로 말해주세요`
 
--   `BigInt`
--   `globalThis`
+-   `New Features`
+    -   `BigInt`
+    -   `globalThis`
+    -   `Well defined for-in order`
+    -   `Optional Chaining`
+    -   `Nullish Coalescing`
+-   `Class`
+    -   `Private Fields`
+    -   `Static Fields`
+-   `Async`
+    -   `Top Level Await`
+    -   `Promise.allSettled()`
+-   `String`
+    -   `matchAll()`
 -   `Module`
     -   `Dynamic Import`
     -   `Module Namespace Exports`
     -   `import.meta`
--   `New Syntax`
-    -   `Nullish Coalescing`
-    -   `Optional Chaining`
--   `New Methods`
-    -   `Promise.allSettled`
-    -   `String.matchAll()`
--   `Well defined for-in order`
 
-[출처] [JavaScript History es10, es11](https://medium.com/@amandeepkochhar/javascript-es10-new-features-in-ecmascript-10-es2019-version-2e5ac8c46493)
+[출처1](https://techaffinity.com/blog/what-is-new-for-developers-in-javascript-ecmascript/)
+
+[출처2](https://dev.to/hanakivan/what-s-new-in-es2020-es11-1a5h)
+
+[출처3](https://ecmascriptfeatures.online/)
 
 ---
 
@@ -588,7 +597,10 @@ ES2015부터 매년 6월에 새 버전이 출시됩니다.
 
 #### `ESNEXT에서 추가된 기능을 아는대로 말해주세요`
 
+아래 2개의 사이트를 참조해주세요.
+
 [ESNext Proposal Tables](http://kangax.github.io/compat-table/esnext/)
+[ECMAScript Features](https://ecmascriptfeatures.online/)
 
 **Stages :**
 
