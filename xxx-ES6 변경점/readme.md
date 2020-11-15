@@ -41,7 +41,7 @@ a = 999; // error
 **ES5 :**
 
 ```ts
-Object.defineProperty(globalThis, "a", {
+Object.defineProperty(this, "a", {
     value: 123,
     enumerable: true,
     writable: false,
