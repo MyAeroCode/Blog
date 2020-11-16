@@ -1,3 +1,38 @@
+`ES10`의 주요 변경점은 `편의성 개선`과 `유니코드/JSON 이슈 수정`입니다. 깊이 이해할 필요 없이 천천히 읽어내리면 됩니다.
+
+---
+
+**톺아보기 :**
+
+-   `String`
+    -   `New Methods`
+        -   `trimStart()`
+        -   `trimEnd()`
+-   `Object`
+    -   `New Methods`
+        -   `fromEntries()`
+-   `Array`
+    -   `Enhanced`
+        -   `Stable sort()`
+    -   `New Methods`
+        -   `flat()`
+        -   `flatMap()`
+-   `Function`
+    -   `Enhanced`
+        -   `toString()`
+-   `Symbol`
+    -   `New Features`
+        -   `description`
+-   `JSON`
+    -   `Enhanced`
+        -   `JSON ⊂ ECMAScript (JSON SuperSet)`
+        -   `Well-formed JSON.stringify()`
+-   `Optional Catch Binding`
+
+---
+
+---
+
 # String
 
 ## New Methods
@@ -41,6 +76,8 @@ console.log("  Hello, World!  ".trimRight());
 ### fromEntries()
 
 `[key, value]의 배열` 또는 `Map`을 사용하여 객체를 생성할 수 있습니다.
+
+---
 
 **via [key, value][] :**
 
@@ -199,6 +236,8 @@ console.log(sum.description); // "Hello, World!";
 
 `JSON SuperSet`으로도 불립니다. ES9 이하에서는 문자열에 `U+2028(line separator)` 문자와 `U+2029(paragraph separator)` 문자를 포함할 수 없었지만, JSON 표준에서는 위의 두 문자를 허용했기 때문에 에러가 발생할 수 있었습니다. ES10 부터는 ECMA에서도 위의 두 문자를 허용합니다. 해당 개선으로 인해 ECMA는 JSON를 완전히 호환합니다.
 
+---
+
 **ES 10:**
 
 ```ts
@@ -221,6 +260,8 @@ const word2 = `\u{2029}`; // Error
 
 이전에는 일부 유니코드가 포함된 객체를 문자열로 바꿀 때 폰트가 깨졌습니다.
 
+---
+
 **ES 9:**
 
 ```ts
@@ -235,6 +276,8 @@ console.log(stringified);
 ```
 
 이제는 유니코드 코드를 그대로 표현합니다.
+
+---
 
 **ES 10:**
 
@@ -256,6 +299,8 @@ console.log(stringified);
 # Optinal Catch Binding
 
 catch에서 파라미터를 받지 않을경우 소괄호를 생략할 수 있습니다.
+
+---
 
 **ES 10:**
 

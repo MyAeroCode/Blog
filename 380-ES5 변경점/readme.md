@@ -1,4 +1,55 @@
-ES5(2009) 에서 추가된 기능들에 대해 정리합니다.
+`ES5`는 기본적으로 편의성 개선에 초점이 맞추어져 있습니다. 기존에 프로그래머가 구현해야 했던 기능이나, 있으면 편리하겠다 싶을만한 기능들이 해당 버전에서 제공됩니다. 눈여겨 보아야 할 변경점은 `use strict` `Array Methods` `JSON Support` 입니다.
+
+---
+
+**톺아보기 :**
+
+-   `use strict`
+-   `Function`
+    -   `New Methods`
+        -   `.bind()`
+-   `String`
+    -   `New Features`
+        -   `Index Bracket`
+        -   `Strings Over Multiple Lines`
+    -   `New Methods`
+        -   `.trim()`
+        -   `.charAt()`
+-   `Array`
+    -   `New Features`
+        -   `Trailing Commas`
+    -   `New Methods`
+        -   `.isArray()`
+        -   `.forEach()`
+        -   `.map()`
+        -   `.filter()`
+        -   `.reduce()`
+        -   `.reduceRight()`
+        -   `.every()`
+        -   `.some()`
+        -   `.indexOf()`
+        -   `.lastIndexOf()`
+-   `Object`
+    -   `New Features`
+        -   `Trailing Commas`
+        -   `getter / setter`
+    -   `New Methods`
+        -   `.defineProperty()`
+        -   `.defineProperties()`
+        -   `.getOwnPropertyDescriptor()`
+        -   `.getOwnPropertyNames()`
+        -   `.keys()`
+        -   `.preventExtensions()`
+        -   `.isExtensible()`
+        -   `.seal()`
+        -   `.isSealed()`
+        -   `.freeze()`
+        -   `.isFrozen()`
+        -   `.create()`
+-   `JSON Support`
+    -   `.parse()`
+    -   `.stringify()`
+-   `Date.now()`
 
 ---
 
@@ -6,7 +57,9 @@ ES5(2009) 에서 추가된 기능들에 대해 정리합니다.
 
 # use strict
 
-코드의 상단에 `"use strict"`를 적으면, 평소라면 무시할만한 `위험 행동`들을 더 이상 무시하지 않고, 익셉션을 발생시킵니다.
+코드의 상단에 `"use strict"`를 선언하면 평소라면 무시할만한 `위험행동`을 더 이상 무시하지 않고 익셉션을 발생시킵니다.
+
+---
 
 **정의되지 않은 변수 사용 :**
 

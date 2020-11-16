@@ -1,3 +1,32 @@
+`ES11`은 보다 깊은 `편의성 개선`을 제공합니다. 기존의 문법에서 걸림돌이 되거나 불편했던 제약사항들을 완화하거나, 그것을 해결한 기능을 새로운 문법으로 풀어냈습니다.
+
+---
+
+**톺아보기 :**
+
+-   `New Features`
+    -   `BigInt`
+    -   `globalThis`
+    -   `Well defined for-in order`
+    -   `Optional Chaining`
+    -   `Nullish Coalescing`
+-   `Class`
+    -   `Private Fields`
+    -   `Static Fields`
+-   `Async`
+    -   `Top Level Await`
+    -   `Promise.allSettled()`
+-   `String`
+    -   `matchAll()`
+-   `Module`
+    -   `Dynamic Import`
+    -   `Module Namespace Exports`
+    -   `import.meta`
+
+---
+
+---
+
 # New Featrues
 
 ## BigInt
@@ -84,6 +113,8 @@ function getKeys2(obj) {
 
 퀘스쳔 닷(`?.`)을 사용하여 속성에 접근할 경우, 해당 속성이 존재하지 않는다면 `undefined`를 반환하고 탐색을 멈춥니다. 즉, `Cannot read property '...' of undefined` 에러가 발생하지 않습니다.
 
+---
+
 **ES 11:**
 
 ```ts
@@ -103,6 +134,8 @@ console.log(outer.inner.value);
 ```
 
 퀘스쳔 닷의 앞이 `undefined`라면 탐색을 멈춘다는 특징은 굉장히 유용합니다. 아래와 같은 상황에 적용할 수 있습니다.
+
+---
 
 **배열 요소에 접근 :**
 
@@ -176,6 +209,8 @@ getValue(0); // 0
 
 필드 이름의 앞에 `#`를 붙이면 비공개 필드로 선언됩니다. 기존에는 클래스로 이것을 구현할 수 없었으므로 `functional class`와 `closure`를 통해 구현해야 했습니다.
 
+---
+
 **ES 11:**
 
 ```ts
@@ -246,6 +281,8 @@ class Box {
 
 필드의 앞에 `Static`을 붙이면, 해당 필드는 클래스에 소유됩니다.
 
+---
+
 **ES 11:**
 
 ```ts
@@ -276,6 +313,8 @@ Box.hello();
 ## Top Level Await
 
 기존의 `await`는 항상 `async function` 내부에서만 허용되었지만, 이제 최상위 문맥에서도 `await` 키워드를 사용할 수 있습니다.
+
+---
 
 **ES 11:**
 

@@ -1,3 +1,30 @@
+`ES9`는 정규식과 비동기 작업에 대한 새로운 기능이 주요 변경점입니다. 기존의 `Iterator`와 이번에 나온 `Async Iterator`와의 차이점을 숙지해야 합니다.
+
+---
+
+**톺아보기 :**
+
+-   `Async`
+    -   `Promise.prototype.finally()`
+    -   `Async Iterator`
+        -   `for-await-of`
+        -   `Symbol.asyncIterator`
+-   `String`
+    -   `Lifting Template Literal Restriction`
+-   `Object`
+    -   `New Features`
+        -   `Rest Properties`
+        -   `Spread Properties`
+-   `RegExp`
+    -   `Named Capture Groups`
+    -   `Unicode Property Escapes`
+    -   `Lookbehind Assertions`
+    -   `s flag (dotAll)`
+
+---
+
+---
+
 # Async
 
 ## Promise.finally()
@@ -37,6 +64,8 @@ Promise.resolve("data")
 
 `for-of`에 주어진 iterator이 프로마이즈를 포함하고 있다면, `for-await-of`으로 이행된 값을 가져올 수 있습니다.
 
+---
+
 **ES 9:**
 
 ```ts
@@ -61,6 +90,8 @@ for (const promise of promises) {
 ### Symbol.asyncIterator
 
 `Symbol.iterator`와 다르게 `async`키워드가 허용됩니다.
+
+---
 
 **ES 9:**
 
@@ -190,6 +221,8 @@ console.log(others); // { x: 3, y: 4 }
 
 객체 표현식에서 분해 연산자를 사용하여 기존의 객체를 얕은복사 시킬 수 있습니다.
 
+---
+
 **ES 9:**
 
 ```ts
@@ -301,6 +334,8 @@ const result = regExp.exec("2020-12-25");
 
 LookBehind의 중요한 특징은 앞서 매칭된 정보를 반환하지 않는다는 것입니다.
 
+---
+
 **exec :**
 
 ```ts
@@ -319,6 +354,8 @@ LookBehind의 중요한 특징은 앞서 매칭된 정보를 반환하지 않는
 ## s flag (dotAll)
 
 기존에는 닷 기호(`.`)가 개행문자에 매칭되지 않았지만 ES9부터는 `s (dotAll)` 플래그를 사용하여 개행문자에도 매칭시킬 수 있습니다.
+
+---
 
 **ES 9:**
 

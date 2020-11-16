@@ -1,4 +1,83 @@
-`ES6 (ES2015)` 에서 추가된 기능들에 대해 정리합니다. 기존의 `ES5`를 사용하여 구현할 수 있는 경우가 대부분이므로, 구현방법을 함께 알아두면 좋습니다.
+`ES6` 또는 `ES2015`는 그야말로 대격변이 일어났습니다. 하나만 들어와도 벅찬 거대한 개념들이 무수히 많이 추가됬으며, 새로운 문법들도 다수 추가됬습니다. 이번 변경점에서 특히 눈여겨 봐야 할 기능들은 다음과 같습니다.
+
+-   `Block-Scope`
+-   `Arrow Functions`
+-   `Symbol`
+-   `Class`
+-   `Promise`
+-   `Iterator Protocol`
+
+---
+
+`Class`와 같은 일부 기능은 `ES5`를 사용하여 구현할 수 있습니다. 이런 경우에는 `ES5`로 어떻게 구현할 수 있는지, 어떤 차이점이 있는지 기억해두면 좋습니다. 누구라도 알만한 유니콘 스타트업의 기술면접에서 실제로 출제되었습니다. `ES6`은 단언컨대 ECMAScript 역사상 가장 큰 업데이트입니다 😂
+
+---
+
+**톺아보기 :**
+
+-   `Definition`
+    -   `let`
+    -   `const`
+    -   `Block-Scoped Variables`
+    -   `Block-Scoped Functions`
+-   `Function`
+    -   `Arrow Functions`
+    -   `Default Parameter Value`
+    -   `Rest Parameter`
+    -   `Spread Operator`
+-   `Literals`
+    -   `String`
+        -   `BackQoute Literal`
+        -   `Tagged String Literal`
+        -   `Unicode Literal`
+    -   `Number`
+        -   `Binary`
+        -   `Octal`
+-   `Regular Expression`
+    -   `Keep Macthing Position`
+-   `Object`
+    -   `New Features`
+        -   `Property Shorthand`
+        -   `Computed Property Names`
+        -   `Method Property`
+        -   `Destructuring Assignment`
+    -   `New Methods`
+        -   `.assign()`
+        -
+-   `String`
+    -   `New Methods`
+        -   `.repeat()`
+        -   `.startsWith()`
+        -   `.endsWith()`
+        -   `.includes()`
+-   `Number`
+    -   `New Methods`
+        -   `.isNaN()`
+        -   `.isFinite()`
+        -   `.isSafeInteger()`
+    -   `New Static Constant`
+        -   `.EPSILON`
+-   `Math`
+    -   `New Methods`
+        -   `.trunc()`
+        -   `.sign()`
+-   `Modules`
+-   `Classes`
+-   `Symbol Type`
+-   `Iterator Protocol`
+    -   `for of`
+    -   `Iterators`
+    -   `Generators`
+-   `DataStructure`
+    -   `Map`
+    -   `Set`
+    -   `WeakMap`
+    -   `WeakSet`
+-   `TypedArrays`
+-   `Promises`
+-   `Meta-Programming`
+    -   `Proxy`
+    -   `Reflection`
 
 ---
 
@@ -9,6 +88,8 @@
 ## let
 
 중복으로 선언할 수 없는 변수를 생성합니다.
+
+---
 
 **ES 6:**
 
@@ -30,6 +111,8 @@ ES5로 구현할 수 없습니다.
 ## const
 
 값의 변경이 불가능한 변수를 생성합니다.
+
+---
 
 **ES6 :**
 
@@ -88,6 +171,8 @@ function f() {
 
 스코프 원리를 이해하기 위해 인터널하게 들여다보면 인터프리터는 `var`로 선언된 변수의 선언을 최상위로 끌어올려 처리합니다. 이러한 특징을 `hoisting`이라고 합니다.
 
+---
+
 **우리가 작성한 코드 :**
 
 ```ts
@@ -119,6 +204,8 @@ b = 2;
 ```
 
 그러나 위의 동작방식은 이치에 맞지 않으므로 `let`, `const`는 호이스팅되지 않습니다.
+
+---
 
 **let으로 재작성된 코드 :**
 
@@ -172,6 +259,8 @@ b = 2
 
 자바스크립트는 `함수선언문`을 다음과 같이 `호이스팅된 함수표현식`으로 대체되는 것을 표준으로 하고 있습니다.
 
+---
+
 **우리가 작성한 함수선언문 :**
 
 ```ts
@@ -214,6 +303,8 @@ hello();
 
 나중에 선언된 `hello`가 먼저 선언된 `hello`를 덮어쓰기 때문에 `"inner"`가 출력되는 것을 예상할 수 있으며, 실제로 옛날 자바스크립트 엔진은 이러한 방식으로 동작합니다.
 
+---
+
 **구버전 엔진 :**
 
 ```
@@ -224,6 +315,8 @@ inner
 
 하지만 `ES6` 부터는 선행함수가 후행함수에 덮어씌어지지 않도록 약간 개선됩니다.
 
+---
+
 **신버전 엔진 :**
 
 ```
@@ -232,7 +325,9 @@ outer
 outer
 ```
 
-하지만 사정이 있어 `ES6`을 사용할 수 없어도 `ES5`만으로 해당 기능을 구현할 수 있습니다. `var`이 함수레벨 스코프라는 특성을 이용하는 것 입니다.
+하지만 `ES6`을 사용할 수 없어도 `ES5`만으로 해당 기능을 구현할 수 있습니다. `var`이 함수레벨 스코프라는 특성을 이용하는 것 입니다.
+
+---
 
 **ES 5:**
 
@@ -286,6 +381,8 @@ outer
 
 기존보다 더 짧은 함수선언이 가능합니다.
 
+---
+
 **ES 6:**
 
 ```ts
@@ -310,6 +407,8 @@ const hello = function () {
 ### LexicalThis
 
 그러나 기존의 함수식과 완전히 같은것은 아닙니다. 기존의 함수표현식의 this는 `호출문에서 봤을 때 dot으로 이어진 1단계 상위객체`로 바인딩되지만, 화살표 함수는 `자신을 생성한 함수의 this`로 바인딩됩니다.
+
+---
 
 **기존 함수표현식 :**
 
@@ -378,7 +477,7 @@ increase();
 
 ### Constructor
 
-화살표 함수로 만들어진 함수는 `prototype` 프로퍼티를 갖지 않으므로, 생성자 자격이 없으므로 `new` 키워드와 함께 사용할 수 없습니다.
+화살표 함수로 만들어진 함수는 `prototype` 프로퍼티를 갖지 않습니다. 즉, 생성자 자격이 없으므로 `new` 키워드와 함께 사용할 수 없습니다.
 
 ---
 
@@ -387,6 +486,8 @@ increase();
 ## Default Param
 
 주어지지 않은 파라미터의 초기값을 설정할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -413,6 +514,8 @@ function f(x, y, x) {
 ## Rest Parameter
 
 이후에 오는 모든 파라미터를 배열로 받을 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -442,6 +545,8 @@ function f(x, y) {
 
 `ES6`부터 배열은 `Iterator Protocol`가 구현됩니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -465,6 +570,8 @@ f.apply(undefined, [1, 2].concat(params));
 ---
 
 마찬가지로 문자열도 `Iterator Protocol`이 도입됩니다.
+
+---
 
 **ES6 :**
 
@@ -526,6 +633,8 @@ console.log(tagged); // "bbb"
 
 이제 유니코드를 완벽하게 지원합니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -547,6 +656,8 @@ console.log(tagged); // "bbb"
 ### Binary, Octal
 
 2진 8진 리터럴을 지원합니다.
+
+---
 
 **ES6 :**
 
@@ -571,6 +682,8 @@ parseInt("767", 8) === 503;
 ## Keep Matching Position
 
 이제 정규식 결과에서, 각 토큰의 마지막 포지션 값을 알 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -618,6 +731,8 @@ var parser = function (input, match) {
 
 변수 이름을 프로퍼티 이름으로 사용할 경우, 객체 선언문을 축약할 수 있습니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -641,6 +756,8 @@ var obj = { x: x, y: y };
 ### Computed Property Names
 
 표현식의 결과를 프로퍼티 이름으로 사용할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -667,6 +784,8 @@ obj["a".repeat(3)] = "bar";
 ### Method Property
 
 객체 선언문에서 함수 선언문을 사용할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -706,6 +825,8 @@ var obj = {
 
 배열의 각 원소는 열거가능하므로,
 
+---
+
 **ES6 :**
 
 ```ts
@@ -729,6 +850,8 @@ b = tmp;
 
 객체도 각 프로퍼티도 열거가능하므로,
 
+---
+
 **ES6 :**
 
 ```ts
@@ -751,6 +874,8 @@ var z = obj.z;
 ---
 
 객체에서 사용 시, 재귀적으로 분해하거나 별칭을 부여할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -778,6 +903,8 @@ var inner_v = outer.inner.value;
 
 존재하지 않는 프로퍼티에 대해서는 기본값을 부여할 수 있습니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -801,6 +928,8 @@ var y = list[1] === undefined ? 2 : list[1];
 ---
 
 함수 시그너쳐에도 적용할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -846,6 +975,9 @@ c({ name: "x", val: 1 });
 
 일치하는 프로퍼티가 없다면 undefined가 적용됩니다.
 
+---
+
+
 **ES6 :**
 
 ```ts
@@ -875,6 +1007,8 @@ var d = typeof list[3] !== "undefined" ? list[3] : undefined;
 ### assign()
 
 주어진 src의 모든 프로퍼티를 dest에 할당합니다. 연산의 결과로 dest를 반환합니다. 중복된 프로퍼티는 후행의 것으로 덮어씌어집니다.
+
+---
 
 **ES6 :**
 
@@ -1025,6 +1159,8 @@ IEEE754 방식으로 표현할 수 있는 가장 작은 숫자를 가르킵니�
 
 소수점 버림연산입니다. 기존에는 `ceil`과 `floor`를 사용하여 직접 구현해야 했습니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -1049,6 +1185,8 @@ function trunc(n) {
 ### sign()
 
 주어진 수의 부호를 판별합니다.
+
+---
 
 **ES6 :**
 
@@ -1088,6 +1226,8 @@ function sign(n) {
 
 클래스 문법이 지원됩니다! 그러나 내부적으로는 여전히 프로토타입으로 작동합니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -1124,6 +1264,8 @@ Shape.prototype.move = function (x, y) {
 
 상속도 마찬가지입니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -1155,6 +1297,8 @@ Rectangle.prototype.constructor = Rectangle;
 ## Expression Based Inheritance
 
 무엇을 상속할지 동적으로 결정할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -1201,6 +1345,8 @@ console.log(new C().name); // "A" or "B"
 
 Super 키워드를 사용하여 부모 클래스에 접근할 수 있습니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -1246,6 +1392,8 @@ console.log(new B().getVal()); // 5
 
 static 키워드로 클래스 수준에서 프로퍼티를 설정할 수 있습니다.
 
+---
+
 **ES6 :**
 
 ```ts
@@ -1281,6 +1429,8 @@ Box.getRandomBox();
 ## getter/setter
 
 get, set을 바로 클래스 내부에서 사용할 수 있습니다.
+
+---
 
 **ES6 :**
 
@@ -1362,6 +1512,8 @@ console.log(a === b); // true
 ---
 
 특정 용도로 사용되는 Symbol은 스태틱 프로퍼티에 동봉되어 있습니다. 이것을 `Well-Known Symbol` 이라고 합니다.
+
+---
 
 **이터레이터 심볼 :**
 
@@ -1467,6 +1619,8 @@ const values = [...list]; // ["a", "b"];
 ### 기본 사용법
 
 `yield` 키워드로 요소를 프로토콜에 제공할 수 있으며, `yield`는 독특한 특성이 있기 때문에 `iterator`보다 훨씬 유연하고 정교한 작업이 가능합니다. 함수의 이름 앞에 \*을 붙이면 `Generators`로 정의됩니다.
+
+---
 
 **선언 :**
 
@@ -1691,6 +1845,8 @@ const r = [...range(3, 6)]; // [3, 4, 5];
 
 `Object`를 딕셔너리를 사용하면 프로토타입에 정의된 요소들을 엔트리로 인식할 수 있습니다. 반면에 `Map`은 프로토타입이 없는 `Entry Container`에 엔트리를 담고 있으므로 명시적으로 제공한 키 외에는 어떤 키도 가지지 않습니다.
 
+---
+
 **object :**
 
 ```ts
@@ -1718,6 +1874,8 @@ console.log(map.has("toString")); // false
 ### 모든 형태의 키 허용
 
 `Object`의 키는 `String` 또는 `Symbol` 타입이어야 합니다. 만약 이외의 키를 저장한 경우 `String`으로 캐스팅됩니다. 반면에 `Map`은 모든 형태의 키를 허용하며, 키를 손상시키지 않습니다.
+
+---
 
 **object :**
 
@@ -1755,6 +1913,8 @@ console.log([...map.keys()]);
 
 `Map`은 추가적인 메모리를 사용하여 삽입된 순서를 유지합니다, 그러므로 `Map`을 순회하면 먼저 삽입된 요소가 먼저 출력됩니다. 반면에 `Object`의 키는 삽입순서를 유지하지 않습니다.
 
+---
+
 **object :**
 
 ```ts
@@ -1791,6 +1951,8 @@ console.log([...map.keys()]);
 
 `Map`의 엔트리 개수는 `size` 프로퍼티를 통해 쉽고 빠르게 알아낼 수 있지만, `Object`의 항목 수는 직접 계산해야 하고, 매우 느립니다.
 
+---
+
 **object :**
 
 ```ts
@@ -1814,6 +1976,8 @@ console.log(map.size);
 ### 순회 프로토콜 지원
 
 `Map`은 순회 프로토콜을 지원하므로 `for of` 구문과 `Spread Operator`를 사용하여 간편하게 순회할 수 있지만, `Object`는 그렇지 않으므로, 먼저 모든 키를 알아내는 과정이 필요합니다.
+
+---
 
 **object :**
 
@@ -1852,6 +2016,8 @@ console.log(entries); // [ [ 0, 1 ], [ 2, 3 ] ]
 ### 퍼포먼스 비교
 
 데이터의 개수와 연산의 종류 상관없이, Key가 중복될수록 `Object`가 유리하고, Key가 중복되지 않을수록 `Map`이 유리합니다.
+
+---
 
 **object가 유리한 케이스 :**
 
@@ -2189,6 +2355,8 @@ done
 ## 콜백과의 차이
 
 `CallBack`은 동기식이지만 `Promise`는 비동기로 작동합니다. 즉, `CallBack`은 후행 코드들을 블럭킹합니다.
+
+---
 
 **CallBack :**
 

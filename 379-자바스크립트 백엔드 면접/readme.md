@@ -262,6 +262,8 @@ function __await(thisArg, _arguments, generator) {
 
 이제 `async / await`를 구현할 수 있습니다.
 
+---
+
 **ES 8:**
 
 ```ts
