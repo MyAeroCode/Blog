@@ -374,8 +374,6 @@ Promise.allSettled([
 
 ## matchAll()
 
-`match()`에 `g` 플래그가 붙은 정규식을 넘기면 일치하는 모든 토큰을 반환하도록 향상됩니다.
-
 ```ts
 const regex = /x[a-z]+/g;
 const text = "x y z xx xy xz";
