@@ -468,8 +468,8 @@ int main(){
                 b();
             }
         }
+        isA = !isA;
     }
-    isA = !isA;
 }
 ```
 
